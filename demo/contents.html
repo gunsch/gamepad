@@ -1,0 +1,40 @@
+
+<link rel='stylesheet' href='demo/demo.css'></link>
+<body>
+  <h1>Gamepad API Demo</h1>
+  <p>Wrapper around the Gamepad API using Google's
+      <a href='https://developers.google.com/closure/library/'>Closure
+      library</a>.</p>
+  <div id='events'><pre></pre></div>
+
+  <script>
+  var eventBox = goog.dom.getElement('events');
+  var addEvent = function(text) {
+    eventBox.firstChild.textContent += text + '\n';
+    eventBox.scrollTop = eventBox.scrollHeight;
+  };
+
+  var logGamepadEvent = function(event) {
+    addEvent(event.type + " " + event.button + " " + event.axis + " " +
+        event.value);
+  };
+
+  var logGamepadConnection = function(event) {
+    addEvent(event.type);
+  };
+
+  var pads = gamepad.GamepadManager.getInstance();
+  goog.events.listen(pads, gamepad.EventType.CONNECTED, function(e) {
+    logGamepadConnection(e);
+
+    goog.events.listen(e.gamepad, [
+      gamepad.EventType.BUTTON_DOWN,
+      gamepad.EventType.BUTTON_UP,
+      gamepad.EventType.JOYSTICK_MOVED,
+      gamepad.EventType.DISCONNECTED
+    ], logGamepadEvent);
+  });
+  pads.pollGamepads(true);
+  </script>
+</body>
+

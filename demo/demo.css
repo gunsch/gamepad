@@ -1,0 +1,10 @@
+#events {
+  border: 2px inset #ccc;
+  font-family: monospace;
+  height: 400px;
+  overflow-y: auto;
+}
+
+#events pre {
+  margin: 10px;
+}
