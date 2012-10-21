@@ -33,8 +33,9 @@ Once built, the file `demo.html` should have everything you need.
 
 ## Known Issues
 
-Only supported in Chrome 22. Support for Firefox to follow. Only tested with
-PS3 DualShock controller. Let me know how/if it works with other controllers.
+1. Only supported in Chrome 22. Support for Firefox to follow.
+1. Only tested with PS3 DualShock controller. Let me know how/if it works with other controllers.
+1. Gamepad will not appear as "connected" until you actually press one or more buttons. This seems to be a browser-level issue.
 
 ## License
 
