@@ -15,7 +15,7 @@ debug: demo.html
 release: JS_OUTPUTS += compiled.js
 release: BUILDER_FLAGS += -f "--warning_level=VERBOSE"
 release: BUILDER_FLAGS += -f "--js_output_file=compiled.js"
-release: BUILDER_FLAGS += -f "--compilation_level=ADVANCED_OPTIMIZATIONS"
+release: BUILDER_FLAGS += -f "--compilation_level=SIMPLE_OPTIMIZATIONS"
 release: BUILDER_FLAGS += --output_mode=compiled
 release: BUILDER_FLAGS += --compiler_jar=$(COMPILER)
 release: compiled.js demo.html
