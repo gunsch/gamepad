@@ -47,7 +47,8 @@ gamepad.GamepadManager = function() {
    * @type {goog.Timer}
    * @private
    */
-  this.pollingTimer_ = new goog.Timer(16);
+  this.pollingTimer_ = new goog.Timer(10,
+      gamepad.GamepadManager.AnimationTimer.getInstance());
 
   /**
    * Default threshold for button presses/releases. Any newly connected gamepads
@@ -199,4 +200,97 @@ gamepad.GamepadManager.prototype.setThresholds = function(buttonThreshold,
   goog.array.forEach(this.gamepads_, function(gamepad) {
     gamepad && gamepad.setThresholds(buttonThreshold, joystickThreshold);
   });
+};
+
+
+/**
+ * Used to power goog.Timer with animation frame requests.
+ * @constructor
+ * @extends {goog.events.EventTarget}
+ */
+gamepad.GamepadManager.AnimationTimer = function() {
+
+  /**
+   * Map of listener IDs to listeners currently tracked by this timer.
+   * @type {Object.<number, Function>}
+   * @private
+   */
+  this.listeners_ = {};
+
+  /**
+   * Global listener count. Used for setTimeout/clearTimeout.
+   * @type {number}
+   * @private
+   */
+  this.listenerCount_ = 1;
+
+  /**
+   * The browser-level function used to request an animation frame.
+   * @type {Function}
+   * @private
+   */
+  this.animationRequestFunction_ = window.webkitRequestAnimationFrame;
+
+  /**
+   * Tick function, bound to this object. Used to fire events.
+   * @type {Function}
+   * @private
+   */
+  this.boundTick_ = goog.bind(this.tick_, this);
+
+  this.tick_();
+};
+goog.inherits(gamepad.GamepadManager.AnimationTimer, goog.events.EventTarget);
+goog.addSingletonGetter(gamepad.GamepadManager.AnimationTimer);
+
+
+/**
+ * Run a function once, at the next tick.
+ * @param {Function} onTick Call this at the next animation frame.
+ * @return {number} Unique ID for this request that can be used to cancel it.
+ */
+gamepad.GamepadManager.AnimationTimer.prototype.setTimeout = function(onTick) {
+  goog.events.listenOnce(this, goog.Timer.TICK, onTick);
+  this.listeners_[this.listenerCount_] = onTick;
+  return this.listenerCount_++;
+};
+
+
+/**
+ * Given a timeout request that was started, cancel the request.
+ * @param {number} id The ID of the request to cancel.
+ */
+gamepad.GamepadManager.AnimationTimer.prototype.clearTimeout = function(id) {
+  goog.events.unlisten(this, goog.Timer.TICK, this.listeners_[id]);
+  delete this.listeners_[id];
+};
+
+
+/**
+ * Run a function at every future tick.
+ * @param {Function} onTick Call this at the next animation frame.
+ * @return {number} Unique ID for this interval that can be used to cancel it.
+ */
+gamepad.GamepadManager.AnimationTimer.prototype.setInterval = function(onTick) {
+  goog.events.listen(this, goog.Timer.TICK, onTick);
+  this.listeners_[this.listenerCount_] = onTick;
+  return this.listenerCount_++;
+};
+
+
+/**
+ * Given an interval request that was started, cancel the request.
+ * @param {number} id The ID of the request to cancel.
+ */
+gamepad.GamepadManager.AnimationTimer.prototype.clearInterval =
+    gamepad.GamepadManager.AnimationTimer.prototype.clearTimeout;
+
+
+/**
+ * Generate a tick event, firing all timeouts, and start another tick.
+ * @private
+ */
+gamepad.GamepadManager.AnimationTimer.prototype.tick_ = function() {
+  this.dispatchEvent(goog.Timer.TICK);
+  this.animationRequestFunction_.call(window, this.boundTick_);
 };
