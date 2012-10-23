@@ -37,24 +37,19 @@ While this API requires the Closure libraries, its use is meant to be simple.
 The following code snippet is a minimal example of what it would take to get
 a joystick and listen for events:
 
-    var onJoystickConnected = function(event) {
+    var handleJoystickConnection = function(event) {
       var newGamepad = event.gamepad;
-
-      goog.events.listen(newGamepad, gamepad.EventType.JOYSTICK_MOVED,
-          onJoystickMoved);
-      goog.events.listen(newGamepad, [
-        gamepad.EventType.BUTTON_DOWN,
-        gamepad.EventType.BUTTON_UP
-      ], onButtonEvent);
+      goog.events.listen(newGamepad, gamepad.EventType.JOYSTICK_MOVED, handleJoystickMoved);
+      goog.events.listen(newGamepad, [gamepad.EventType.BUTTON_DOWN, gamepad.EventType.BUTTON_UP], handleButtonEvent);
     };
 
-    var onJoystickMoved = function(event) {
+    var handleJoystickMoved = function(event) {
       // Joystick moved
       var joystickAxisId = this.axis;
       var joystickValue = this.value;
     };
 
-    var onButtonEvent = function(event) {
+    var handleButtonEvent = function(event) {
       var buttonId = event.button;
       if (event.type == gamepad.EventType.BUTTON_DOWN) {
         // Button pressed
@@ -64,7 +59,8 @@ a joystick and listen for events:
     };
 
     var manager = gamepad.GamepadManager.getInstance();
-    goog.events.listen(manager, gamepad.EventType.CONNECTED, onJoystickConnected);
+    goog.events.listen(manager, gamepad.EventType.CONNECTED, handleJoystickConnection);
+    manager.pollGamepads(true);
 
 ## Known Issues
 
