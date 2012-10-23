@@ -15,7 +15,7 @@ goog.require('goog.events.EventTarget');
 /**
  * A single Gamepad instance. Gamepads should not be instantiated directly but
  * should be retrieved with gamepad.getGamepad(int) or from a GamepadEvent.
- * @param {Gamepad} gamepad Actual browser Gamepad object.
+ * @param {*} gamepad Actual browser Gamepad object.
  * @constructor
  * @extends {goog.events.EventTarget}
  */
@@ -24,7 +24,7 @@ gamepad.Gamepad = function(gamepad) {
 
   /**
    * Actual browser GamePad object.
-   * @type {Gamepad}
+   * @type {*}
    * @private
    */
   this.gamepad_ = gamepad;
@@ -62,7 +62,11 @@ goog.inherits(gamepad.Gamepad, goog.events.EventTarget);
 
 /**
  * Format for gamepad object's raw button/axis raw data.
- * @typedef {axes: Array.<number>, buttons.<number>}
+ * @typedef {{
+ *     axes: Array.<number>,
+ *     buttons: Array.<number>,
+ *     timestamp: number
+ * }}
  */
 gamepad.Gamepad.RawData;
 
@@ -97,7 +101,8 @@ gamepad.Gamepad.prototype.setThresholds = function(buttonThreshold,
 gamepad.Gamepad.prototype.poll = function() {
   var snapshot = {
     axes: this.gamepad_.axes,
-    buttons: this.gamepad_.buttons
+    buttons: this.gamepad_.buttons,
+    timestamp: this.gamepad_.timestamp
   };
 
   // Check for axis events.
@@ -109,7 +114,7 @@ gamepad.Gamepad.prototype.poll = function() {
           this.joystickThreshold_;
       this.dispatchEvent(new gamepad.GamepadEvent(
           gamepad.EventType.JOYSTICK_MOVED, this, null, i,
-          adjustedValue));
+          adjustedValue, snapshot.timestamp));
       axisEventOccurred = true;
     }
   }, this);
@@ -122,16 +127,16 @@ gamepad.Gamepad.prototype.poll = function() {
   goog.array.forEach(snapshot.buttons, function(buttonValue, i) {
     if (buttonValue >= this.buttonThreshold_ &&
         this.lastButtonSnapshot_[i] < this.buttonThreshold_) {
-      this.dispatchEvent(new gamepad.GamepadEvent(
-          gamepad.EventType.BUTTON_DOWN, this, i, null, 1));
+      this.dispatchEvent(new gamepad.GamepadEvent(gamepad.EventType.BUTTON_DOWN,
+          this, i, null, 1, snapshot.timestamp));
       buttonEventOccurred = true;
     }
 
     // Released
     if (buttonValue < this.buttonThreshold_ &&
         this.lastButtonSnapshot_[i] >= this.buttonThreshold_) {
-      this.dispatchEvent(new gamepad.GamepadEvent(
-          gamepad.EventType.BUTTON_UP, this, i, null, 0));
+      this.dispatchEvent(new gamepad.GamepadEvent(gamepad.EventType.BUTTON_UP,
+          this, i, null, 0, snapshot.timestamp));
       buttonEventOccurred = true;
     }
   }, this);

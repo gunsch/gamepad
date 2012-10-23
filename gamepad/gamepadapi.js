@@ -29,12 +29,14 @@ gamepad.GamepadManager = function() {
   goog.base(this);
 
   /**
-   * @type {Array.<Gamepad>}
+   * Browser Gamepad objects, representing detected Gamepads.
+   * @type {Array.<*>}
    * @private
    */
   this.knownRawGamepads_ = [];
 
   /**
+   * Internal Gamepad objects. Wrappers around browser Gamepad objects.
    * @type {Array.<gamepad.Gamepad>}
    * @private
    */
