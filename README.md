@@ -45,8 +45,8 @@ a joystick and listen for events:
 
     var handleJoystickMoved = function(event) {
       // Joystick moved
-      var joystickAxisId = this.axis;
-      var joystickValue = this.value;
+      var joystickAxisId = event.axis;
+      var joystickValue = event.value;
     };
 
     var handleButtonEvent = function(event) {
