@@ -1,3 +1,4 @@
+SHELL := bash
 SCRIPTS_TMP := scripts #"$(shell mktemp /tmp/XXXXXX)"
 JS_SRCS = $(wildcard gamepad/*.js)
 JS_OUTPUTS =
