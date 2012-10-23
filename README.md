@@ -31,6 +31,41 @@ following commands:
 
 Once built, the file `demo.html` should have everything you need.
 
+## Example Usage
+
+While this API requires the Closure libraries, its use is meant to be simple.
+The following code snippet is a minimal example of what it would take to get
+a joystick and listen for events:
+
+    var onJoystickConnected = function(event) {
+      var newGamepad = event.gamepad;
+
+      goog.events.listen(newGamepad, gamepad.EventType.JOYSTICK_MOVED,
+          onJoystickMoved);
+      goog.events.listen(newGamepad, [
+        gamepad.EventType.BUTTON_DOWN,
+        gamepad.EventType.BUTTON_UP
+      ], onButtonEvent);
+    };
+
+    var onJoystickMoved = function(event) {
+      // Joystick moved
+      var joystickAxisId = this.axis;
+      var joystickValue = this.value;
+    };
+
+    var onButtonEvent = function(event) {
+      var buttonId = event.button;
+      if (event.type == gamepad.EventType.BUTTON_DOWN) {
+        // Button pressed
+      } else if (event.type == gamepad.EventType.BUTTON_UP) {
+        // Button released
+      }
+    };
+
+    var manager = gamepad.GamepadManager.getInstance();
+    goog.events.listen(manager, gamepad.EventType.CONNECTED, onJoystickConnected);
+
 ## Known Issues
 
 1. Only supported in Chrome 22. Support for Firefox to follow.
