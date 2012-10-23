@@ -3,7 +3,7 @@
 A wrapper around the new working-draft
 [Gamepad API](http://www.w3.org/TR/gamepad/). Uses Google's
 [Closure Tools](https://developers.google.com/closure/) for libraries and
-deploying.
+deploying. Try out the [online demo](http://qxlp.net/demos/gamepad/demo.html).
 
 ## Description
 
