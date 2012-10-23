@@ -5,6 +5,13 @@
   <p>Wrapper around the Gamepad API using Google's
       <a href='https://developers.google.com/closure/library/'>Closure
       library</a>.</p>
+  <p>Get the code on <a href="https://github.com/gunsch/gamepad">Github</a>.</p>
+  <div>
+    Joystick resolution:<br/>
+    <input id='resolution' type='range' min='0.01' max='0.5'
+        step='0.01' value='0.1' />
+    <div id='resolutionValue'>0.1</div>
+  </div>
   <div id='events'><pre></pre></div>
 
   <script>
@@ -35,6 +42,14 @@
     ], logGamepadEvent);
   });
   pads.pollGamepads(true);
+
+  var resolutionSlider = goog.dom.getElement('resolution');
+  goog.events.listen(resolutionSlider,
+      goog.events.EventType.CHANGE, function() {
+        pads.setThresholds(0.5, resolutionSlider.value);
+        goog.dom.getElement('resolutionValue').textContent =
+            resolutionSlider.value;
+      });
   </script>
 </body>
 
